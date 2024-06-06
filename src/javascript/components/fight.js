@@ -29,8 +29,11 @@ export function criticalHit(fighter) {
     return fighter.attack * 2;
 }
 
-export function getDamage(attacker, defender, isBlockExist) {
-    const attackPower = isBlockExist ? getHitPower(attacker) - getBlockPower(defender) : getHitPower(attacker);
+export function getDamage(attacker, defender, isBlockExist, isCriticalHit = false) {
+    if (isBlockExist && !isCriticalHit) {
+        return 0;
+    }
+    const attackPower = isCriticalHit ? criticalHit(attacker) : getHitPower(attacker);
     return Math.max(attackPower, 0);
 }
 
@@ -85,8 +88,8 @@ export async function fight(firstFighter, secondFighter) {
                     secondFighterBlockActive = true;
                     break;
                 case PlayerOneCriticalHitCombination[0]:
-                case PlayerOneCriticalHitCombination[1]:
-                case PlayerOneCriticalHitCombination[2]:
+                case [PlayerOneCriticalHitCombination[1]]:
+                case [PlayerOneCriticalHitCombination[2]]:
                     firstFighterCriticalAttackKeys[e.code] = true;
                     if (
                         isCriticalAttackReady(firstFighterCriticalAttackKeys) &&
@@ -102,8 +105,8 @@ export async function fight(firstFighter, secondFighter) {
                     }
                     break;
                 case PlayerTwoCriticalHitCombination[0]:
-                case PlayerTwoCriticalHitCombination[1]:
-                case PlayerTwoCriticalHitCombination[2]:
+                case [PlayerTwoCriticalHitCombination[1]]:
+                case [PlayerTwoCriticalHitCombination[2]]:
                     secondFighterCriticalAttackKeys[e.code] = true;
                     if (
                         isCriticalAttackReady(secondFighterCriticalAttackKeys) &&
@@ -144,14 +147,14 @@ export async function fight(firstFighter, secondFighter) {
                 case PlayerTwoBlock:
                     secondFighterBlockActive = false;
                     break;
-                case PlayerOneCriticalHitCombination[0]:
-                case PlayerOneCriticalHitCombination[1]:
-                case PlayerOneCriticalHitCombination[2]:
+                case [PlayerOneCriticalHitCombination[0]]:
+                case [PlayerOneCriticalHitCombination[1]]:
+                case [PlayerOneCriticalHitCombination[2]]:
                     firstFighterCriticalAttackKeys[e.code] = false;
                     break;
-                case PlayerTwoCriticalHitCombination[0]:
-                case PlayerTwoCriticalHitCombination[1]:
-                case PlayerTwoCriticalHitCombination[2]:
+                case [PlayerTwoCriticalHitCombination[0]]:
+                case [PlayerTwoCriticalHitCombination[1]]:
+                case [PlayerTwoCriticalHitCombination[2]]:
                     secondFighterCriticalAttackKeys[e.code] = false;
                     break;
                 default:
